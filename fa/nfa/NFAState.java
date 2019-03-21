@@ -1,4 +1,7 @@
 package fa.nfa;
+
+import fa.State;
+
 /*
  * NFAState class must extend fa.State abstract class.
  * If your implementation requires it,
@@ -6,5 +9,6 @@ package fa.nfa;
  *
  * @author Ron Lowies
  */
-public class NFAState {
+public class NFAState extends State {
+    
 }
