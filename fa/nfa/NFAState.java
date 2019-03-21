@@ -7,4 +7,5 @@ package fa.nfa;
  * @author Ron Lowies
  */
 public class NFAState {
+    //Branch created
 }
