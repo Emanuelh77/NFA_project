@@ -16,8 +16,12 @@ import java.util.Set;
  */
 public class NFA implements NFAInterface {
 
+    private Set<NFAState> states,eClosure;
+    private NFAState start;
+
     @Override
     public DFA getDFA() {
+
         return null;
     }
 
@@ -28,7 +32,15 @@ public class NFA implements NFAInterface {
 
     @Override
     public Set<NFAState> eClosure(NFAState s) {
-        return null;
+        if(s == null) {
+           return eClosure;
+        }
+        if(!s.isVisited()) {
+            eClosure.add(s);
+            s.setVisited(true);
+        }
+
+        return eClosure(s.getTo('e'));
     }
 
     @Override
