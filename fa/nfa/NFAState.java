@@ -10,5 +10,5 @@ import fa.State;
  * @author Ron Lowies
  */
 public class NFAState extends State {
-    
+
 }
