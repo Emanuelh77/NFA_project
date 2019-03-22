@@ -60,10 +60,10 @@ public class NFAState extends State {
 
     public NFAState getTo(char symb){
         NFAState ret = delta.get(symb);
-        if(ret == null){
-            System.err.println("ERROR: NFAState.getTo(char symb) returns null on " + symb + " from " + name);
-            System.exit(2);
-        }
+//        if(ret == null){
+//            System.err.println("ERROR: NFAState.getTo(char symb) returns null on " + symb + " from " + name);
+//            System.exit(2);
+//        }
         return delta.get(symb);
     }
 

@@ -4,9 +4,7 @@ import fa.State;
 import fa.dfa.DFA;
 import fa.dfa.DFAState;
 
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 
 /*
  * NFA class must implement fa.nfa.NFAInterface interface.
@@ -23,17 +21,30 @@ public class NFA implements NFAInterface {
     private NFAState start;
     private Queue<Set<NFAState>> queue;
 
+    public NFA() {
+        states = new LinkedHashSet<>();
+        eClosure = new LinkedHashSet<>();
+    }
+
     @Override
     public DFA getDFA() {
         queue = new LinkedList<>();
-        queue.add(eClosure(start)); //Start the queue with the first state
+        //queue.add(eClosure(start)); //Start the queue with the first state
+        for(NFAState st : states) { //Fill queue
+            Set<NFAState> dSet = new LinkedHashSet<>();
+            dSet.add(st);
+            queue.add(dSet);
+        }
+
+
         DFA dfa = new DFA();        //Create a dfa
         while(!queue.isEmpty()) {   //Iterate over queue elements
            for(NFAState nState : queue.remove()) { //Each element is a set containing states
                 if(dfa.getStartState() == null) {  //Add start state
-                    dfa.addStartState(nState.getName());
+                    dfa.addStartState(getStartState().getName());
+                } else {
+                    dfa.addState(nState.getName());
                 }
-                dfa.addState(nState.getName());
                 /*TODO: Implement NFA methods to construct states needed for transition table
                  * For example: if NFA has states S,M,F
                  * has transitions: SaS SaM SbS MaM MaF MbM MbF
@@ -46,7 +57,7 @@ public class NFA implements NFAInterface {
                  */
            }
         }
-        return null;
+        return dfa;
     }
 
     @Override
@@ -69,12 +80,16 @@ public class NFA implements NFAInterface {
 
     @Override
     public void addStartState(String name) {
-
+        start = new NFAState(name);
+        states.add(start);
     }
 
     @Override
     public void addState(String name) {
-
+        NFAState stateToAdd = new NFAState(name);
+        if(!states.contains(stateToAdd)) {
+            states.add(stateToAdd);
+        }
     }
 
     @Override
@@ -89,7 +104,7 @@ public class NFA implements NFAInterface {
 
     @Override
     public Set<? extends State> getStates() {
-        return null;
+        return states;
     }
 
     @Override
@@ -99,7 +114,7 @@ public class NFA implements NFAInterface {
 
     @Override
     public State getStartState() {
-        return null;
+        return start;
     }
 
     @Override
