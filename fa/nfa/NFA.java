@@ -14,16 +14,19 @@ import java.util.*;
  * i.e., only helper methods.
  *
  * @author Ron Lowies
+ * @author Emanuel Hernandez
  */
 public class NFA implements NFAInterface {
 
     private Set<NFAState> states,eClosure;
     private NFAState start;
     private Queue<Set<NFAState>> queue;
+    private Set<Character> Sigma;
 
     public NFA() {
         states = new LinkedHashSet<>();
         eClosure = new LinkedHashSet<>();
+        Sigma = new HashSet<Character>();			//alphabet
     }
 
     @Override
@@ -62,7 +65,7 @@ public class NFA implements NFAInterface {
 
     @Override
     public Set<NFAState> getToState(NFAState from, char onSymb) {
-        return null;
+        return from.getTo(onSymb);
     }
 
     @Override
@@ -94,12 +97,28 @@ public class NFA implements NFAInterface {
 
     @Override
     public void addFinalState(String name) {
-
+        NFAState finalState = new NFAState(name, true);
+        addState(finalState);
     }
 
     @Override
     public void addTransition(String fromState, char onSymb, String toState) {
+        getState(fromState).addTransition(onSymb, getState(toState));
+        if(sigma.contains(onSymb) && onSymb != 'e'){
+            sigma.add(onSymb);
+        }
+    }
 
+    //we needed this method to be able to grab instead of the string, the NFAState itself
+    public void getState(String name){
+        NFAState stateToGet = null;
+        for(NFAState state : states){
+            if(state.getName().equals(name)) {
+                stateToGet = state;
+                break;
+            }
+        }
+        return stateToGet;
     }
 
     @Override
@@ -109,7 +128,13 @@ public class NFA implements NFAInterface {
 
     @Override
     public Set<? extends State> getFinalStates() {
-        return null;
+        Set<NFAState> finalStates = new HashSet<NFAState>();
+        for (NFAState nfa_state: states){
+            if (nfa_state.isFinal()){
+                finalStates.add(nfa_state);
+            }
+        }
+        return finalStates;
     }
 
     @Override
@@ -119,6 +144,6 @@ public class NFA implements NFAInterface {
 
     @Override
     public Set<Character> getABC() {
-        return null;
+        return Sigma;
     }
 }

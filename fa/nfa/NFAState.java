@@ -8,6 +8,7 @@ import fa.State;
  * you can add additional instance variables and methods to your NFAState class.
  *
  * @author Ron Lowies
+ * @author Emanuel Hernandez
  */
 public class NFAState extends State {
     private HashMap<Character,NFAState> delta;//delta
@@ -22,8 +23,6 @@ public class NFAState extends State {
         isVisited = visited;
     }
 
-
-
     public boolean isFinal() {
         return isFinal;
     }
@@ -31,8 +30,6 @@ public class NFAState extends State {
     public void setFinal(boolean aFinal) {
         isFinal = aFinal;
     }
-
-
 
     /**
      * Creates the state
@@ -60,12 +57,13 @@ public class NFAState extends State {
 
     public NFAState getTo(char symb){
         NFAState ret = delta.get(symb);
-//        if(ret == null){
+        if(ret == null){
 //            System.err.println("ERROR: NFAState.getTo(char symb) returns null on " + symb + " from " + name);
 //            System.exit(2);
-//        }
-        return delta.get(symb);
+            //are we supposed to return an empty hashset then???
+            return new HashSet<NFAState>();
+       }
+        else return delta.get(symb);
     }
-
 
 }
