@@ -1,5 +1,8 @@
 package fa.nfa;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import fa.State;
 
 /*
@@ -61,9 +64,11 @@ public class NFAState extends State {
 //            System.err.println("ERROR: NFAState.getTo(char symb) returns null on " + symb + " from " + name);
 //            System.exit(2);
             //are we supposed to return an empty hashset then???
-            return new HashSet<NFAState>();
+            return new NFAState(""); //new LinkedHashSet<NFAState>();
        }
-        else return delta.get(symb);
+        else {
+        	return ret;
+        }
     }
 
 }

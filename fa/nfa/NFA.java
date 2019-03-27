@@ -46,7 +46,11 @@ public class NFA implements NFAInterface {
                 if(dfa.getStartState() == null) {  //Add start state
                     dfa.addStartState(getStartState().getName());
                 } else {
-                    dfa.addState(nState.getName());
+                	if(nState.getName().equals(start.getName())) { //Make sure the DFA doesn't write the start state twice.
+                		
+                	} else {
+                		dfa.addState(nState.getName());
+                	}
                 }
                 /*TODO: Implement NFA methods to construct states needed for transition table
                  * For example: if NFA has states S,M,F
@@ -65,7 +69,13 @@ public class NFA implements NFAInterface {
 
     @Override
     public Set<NFAState> getToState(NFAState from, char onSymb) {
-        return from.getTo(onSymb);
+    	
+    	
+    	Set<NFAState> eClosureOfState = eClosure(from);
+    	NFAState directly = from.getTo(onSymb);
+    	eClosureOfState.add(directly);
+    	
+        return eClosureOfState;
     }
 
     @Override
@@ -84,33 +94,43 @@ public class NFA implements NFAInterface {
     @Override
     public void addStartState(String name) {
         start = new NFAState(name);
-        states.add(start);
+        helper(start);
     }
 
     @Override
     public void addState(String name) {
         NFAState stateToAdd = new NFAState(name);
-        if(!states.contains(stateToAdd)) {
-            states.add(stateToAdd);
-        }
+        helper(stateToAdd);
     }
 
     @Override
     public void addFinalState(String name) {
         NFAState finalState = new NFAState(name, true);
-        addState(finalState);
+        helper(finalState);
+    }
+    
+    /**
+     * Checks if the given state is already in the list
+     * Appends to list if it is not already there.
+     * 
+     * @param x state to check
+     */
+    private void helper(NFAState x) {
+    	if(!states.contains(x)) {
+            states.add(x);
+        }
     }
 
     @Override
     public void addTransition(String fromState, char onSymb, String toState) {
         getState(fromState).addTransition(onSymb, getState(toState));
-        if(sigma.contains(onSymb) && onSymb != 'e'){
-            sigma.add(onSymb);
+        if(Sigma.contains(onSymb) && onSymb != 'e'){
+            Sigma.add(onSymb);
         }
     }
 
     //we needed this method to be able to grab instead of the string, the NFAState itself
-    public void getState(String name){
+    public NFAState getState(String name){
         NFAState stateToGet = null;
         for(NFAState state : states){
             if(state.getName().equals(name)) {
