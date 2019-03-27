@@ -1,5 +1,6 @@
 package fa.nfa;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -14,7 +15,7 @@ import fa.State;
  * @author Emanuel Hernandez
  */
 public class NFAState extends State {
-    private HashMap<Character,NFAState> delta;//delta
+    private HashMap<Character, HashSet<NFAState>> delta;//delta
     private boolean isFinal;//remembers its type
     private boolean isVisited; //For DFS/BFS Algorithms
 
@@ -51,20 +52,39 @@ public class NFAState extends State {
     private void initDefault(String name ) {
         this.name = name;
         isVisited = false;
-        delta = new HashMap<Character, NFAState>();
+        delta = new HashMap<Character, HashSet<NFAState>  >();
     }
 
-    public void addTransition(char onSymb, NFAState toState) {
-        delta.put(onSymb, toState);
-    }
+//    public void addTransition(char onSymb, NFAState toState) {
+//    	HashSet<NFAState> temp = new HashSet<NFAState>();
+//    	if(delta.containsKey(onSymb)) { //If onSymb already in set
+//    	temp = delta.get(onSymb);
+//    	temp.add(toState); //Add this transistion to the set available
+//    	} else //otherwise start a new one
+//    	{
+//    		temp.add(toState);
+//    	}
+//        delta.put(onSymb, temp);
+//        
+//    }
+  public void addTransition(char onSymb, NFAState toState) {
+	  HashSet<NFAState> temp = delta.get(onSymb);
+	  if(temp == null) {
+		  temp = new HashSet<>();
+	  }
+	  temp.add(toState);
+	  delta.put(onSymb, temp);
+    
+	  
+  }
 
-    public NFAState getTo(char symb){
-        NFAState ret = delta.get(symb);
+    public HashSet<NFAState> getTo(char symb){
+        HashSet<NFAState> ret = delta.get(symb);
         if(ret == null){
 //            System.err.println("ERROR: NFAState.getTo(char symb) returns null on " + symb + " from " + name);
 //            System.exit(2);
             //are we supposed to return an empty hashset then???
-            return new NFAState(""); //new LinkedHashSet<NFAState>();
+            return new HashSet<NFAState>();
        }
         else {
         	return ret;

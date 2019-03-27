@@ -43,20 +43,18 @@ public class NFA implements NFAInterface {
         DFA dfa = new DFA();        //Create a dfa
         while(!queue.isEmpty()) {   //Iterate over queue elements
            for(NFAState nState : queue.remove()) { //Each element is a set containing states
-                if(dfa.getStartState() == null) {  //Add start state
-                    dfa.addStartState(getStartState().getName());
-                } else {
+                
                 	if(nState.getName().equals(start.getName())) { //Make sure the DFA doesn't write the start state twice.
-                		
+                		dfa.addStartState(getStartState().getName());
                 	} else {
                 		dfa.addState(nState.getName());
                 	}
-                }
+                
                 /*TODO: Implement NFA methods to construct states needed for transition table
                  * For example: if NFA has states S,M,F
                  * has transitions: SaS SaM SbS MaM MaF MbM MbF
                  * and E(S) = { S }
-                 * dfa states found through transistion table are
+                 * dfa states found through transistion table areDFAState.
                  * { S }
                  * { S, M }
                  * { S, M, F}
@@ -70,25 +68,20 @@ public class NFA implements NFAInterface {
     @Override
     public Set<NFAState> getToState(NFAState from, char onSymb) {
     	
-    	
-    	Set<NFAState> eClosureOfState = eClosure(from);
-    	NFAState directly = from.getTo(onSymb);
-    	eClosureOfState.add(directly);
-    	
-        return eClosureOfState;
+   
+        return from.getTo(onSymb);
     }
 
     @Override
     public Set<NFAState> eClosure(NFAState s) {
-        if(s == null) {
-           return eClosure;
+    	
+        if(s.getTo('e') != null) {
+        	for (NFAState st : s.getTo('e')) {
+        		eClosure.add(st);
+        		eClosure(st);
+        	}
         }
-        if(!s.isVisited()) {
-            eClosure.add(s);
-            s.setVisited(true);
-        }
-
-        return eClosure(s.getTo('e'));
+		return eClosure;
     }
 
     @Override
@@ -130,7 +123,7 @@ public class NFA implements NFAInterface {
     }
 
     //we needed this method to be able to grab instead of the string, the NFAState itself
-    public NFAState getState(String name){
+    private NFAState getState(String name){
         NFAState stateToGet = null;
         for(NFAState state : states){
             if(state.getName().equals(name)) {
