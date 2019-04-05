@@ -31,38 +31,53 @@ public class NFA implements NFAInterface {
 
     @Override
     public DFA getDFA() {
+//        queue = new LinkedList<>();
+//        //queue.add(eClosure(start)); //Start the queue with the first state
+//        for(NFAState st : states) { //Fill queue
+//            Set<NFAState> dSet = new LinkedHashSet<>();
+//            dSet.add(st);
+//            queue.add(dSet);
+//        }
+//
+//
+//        DFA dfa = new DFA();        //Create a dfa
+//        while(!queue.isEmpty()) {   //Iterate over queue elements
+//           for(NFAState nState : queue.remove()) { //Each element is a set containing states
+//
+//                	if(nState.getName().equals(start.getName())) { //Make sure the DFA doesn't write the start state twice.
+//                		dfa.addStartState(getStartState().getName());
+//                	} else {
+//                		dfa.addState(nState.getName());
+//                	}
+//
+//                /*TODO: Implement NFA methods to construct states needed for transition table
+//                 * For example: if NFA has states S,M,F
+//                 * has transitions: SaS SaM SbS MaM MaF MbM MbF
+//                 * and E(S) = { S }
+//                 * dfa states found through transistion table areDFAState.
+//                 * { S }
+//                 * { S, M }
+//                 * { S, M, F}
+//                 * Need to be used to create the DFA.
+//                 */
+//           }
+        Set<NFAState> dfaState = eClosure(start);
         queue = new LinkedList<>();
-        //queue.add(eClosure(start)); //Start the queue with the first state
-        for(NFAState st : states) { //Fill queue
-            Set<NFAState> dSet = new LinkedHashSet<>();
-            dSet.add(st);
-            queue.add(dSet);
-        }
+        queue.add(dfaState);
 
+        while(!queue.isEmpty()){
+            Set<NFAState> currState = queue.remove();
+            for(Character symb: Sigma){
+                for(NFAState currNFA: currState){
+                    Set<NFAState> next = currNFA.getTo(symb);
+                    HashSet<NFAState> nextEpsilon = new HashSet<>();
+                    for(NFAState nextSingle: next){
+                        nextEpsilon.add(eClosure(nextSingle));
+                    }
+                }
+            }
 
-        DFA dfa = new DFA();        //Create a dfa
-        while(!queue.isEmpty()) {   //Iterate over queue elements
-           for(NFAState nState : queue.remove()) { //Each element is a set containing states
-                
-                	if(nState.getName().equals(start.getName())) { //Make sure the DFA doesn't write the start state twice.
-                		dfa.addStartState(getStartState().getName());
-                	} else {
-                		dfa.addState(nState.getName());
-                	}
-                
-                /*TODO: Implement NFA methods to construct states needed for transition table
-                 * For example: if NFA has states S,M,F
-                 * has transitions: SaS SaM SbS MaM MaF MbM MbF
-                 * and E(S) = { S }
-                 * dfa states found through transistion table areDFAState.
-                 * { S }
-                 * { S, M }
-                 * { S, M, F}
-                 * Need to be used to create the DFA.
-                 */
-           }
         }
-        return dfa;
     }
 
     @Override
