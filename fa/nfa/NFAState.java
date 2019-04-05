@@ -84,7 +84,7 @@ public class NFAState extends State {
 //            System.err.println("ERROR: NFAState.getTo(char symb) returns null on " + symb + " from " + name);
 //            System.exit(2);
             //are we supposed to return an empty hashset then???
-            return new HashSet<NFAState>();
+            return null;
        }
         else {
         	return ret;

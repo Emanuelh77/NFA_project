@@ -6,6 +6,8 @@ import fa.dfa.DFAState;
 
 import java.util.*;
 
+import com.sun.xml.internal.ws.api.pipe.NextAction;
+
 /*
  * NFA class must implement fa.nfa.NFAInterface interface.
  * Make sure to implement all methods inherited from those interfaces.
@@ -61,23 +63,33 @@ public class NFA implements NFAInterface {
 //                 * Need to be used to create the DFA.
 //                 */
 //           }
+    	DFA dfa = new DFA();
         Set<NFAState> dfaState = eClosure(start);
         queue = new LinkedList<>();
         queue.add(dfaState);
-
+ 
         while(!queue.isEmpty()){
             Set<NFAState> currState = queue.remove();
             for(Character symb: Sigma){
                 for(NFAState currNFA: currState){
                     Set<NFAState> next = currNFA.getTo(symb);
-                    HashSet<NFAState> nextEpsilon = new HashSet<>();
+                    Set<NFAState> nextEpsilon = new HashSet<>();
                     for(NFAState nextSingle: next){
-                        nextEpsilon.add(eClosure(nextSingle));
-                    }
+                        nextEpsilon.addAll(eClosure(nextSingle));
+                    } 
                 }
+                //TODO:
+                //allElements new DFAState on syms
+                DFAState temp = new DFAState(currState.toString());
+                DFAState currDFA = new DFAState(dfaState.toString());
+                temp.addTransition(symb, currDFA);
+   
+                //q.add(allElements) //if it has seen yet
+                	//add transition from currState to allElements on sym
             }
 
         }
+		return dfa;
     }
 
     @Override
@@ -95,7 +107,10 @@ public class NFA implements NFAInterface {
         		eClosure.add(st);
         		eClosure(st);
         	}
+        } else {
+        	eClosure.add(s);
         }
+        
 		return eClosure;
     }
 
@@ -132,7 +147,7 @@ public class NFA implements NFAInterface {
     @Override
     public void addTransition(String fromState, char onSymb, String toState) {
         getState(fromState).addTransition(onSymb, getState(toState));
-        if(Sigma.contains(onSymb) && onSymb != 'e'){
+        if(!Sigma.contains(onSymb) && onSymb != 'e'){
             Sigma.add(onSymb);
         }
     }
