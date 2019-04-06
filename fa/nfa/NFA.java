@@ -63,36 +63,84 @@ public class NFA implements NFAInterface {
 //                 * Need to be used to create the DFA.
 //                 */
 //           }
+    	//Create the DFA
     	DFA dfa = new DFA();
+    	//This map hold the states and their names.
+    	Map<Set<NFAState>, String> seenStateName = new HashMap<>();
+    	//Place holders for state names.
+    	String currStateName, nextStateName = null;
+    	boolean isFinal = false;
+    	//The starting state
         Set<NFAState> dfaState = eClosure(start);
+        //Initialize queue
         queue = new LinkedList<>();
         queue.add(dfaState);
  
         while(!queue.isEmpty()){
-            Set<NFAState> currState = queue.remove();
-            for(Character symb: Sigma){
-                for(NFAState currNFA: currState){
-                    Set<NFAState> next = currNFA.getTo(symb);
-                    Set<NFAState> nextEpsilon = new HashSet<>();
+            Set<NFAState> currState = queue.remove();   //Select state from queue
+            currStateName = currState.toString();		//get name
+            seenStateName.put(currState, currStateName);//Store
+            for(Character symb: Sigma){					//For each alphabet symbol
+                for(NFAState currNFA: currState){		//For each state in the current state 
+                  
+                	
+                	
+                	
+                	Set<NFAState> next = currNFA.getTo(symb); //Set the next 
+                    nextStateName = next.toString();
+                    seenStateName.put(next, nextStateName);
+                    Set<NFAState> nextEpsilon = new HashSet<>();         
                     for(NFAState nextSingle: next){
-                        nextEpsilon.addAll(eClosure(nextSingle));
+                        nextEpsilon.addAll(eClosure(nextSingle));  //Find the closure of each next
+                            //Store name
+                        isFinal = nextSingle.isFinal();
                     } 
+                    ;
                 }
-                //TODO:
-                //allElements new DFAState on syms
-                DFAState temp = new DFAState(currState.toString());
-                DFAState currDFA = new DFAState(dfaState.toString());
-                temp.addTransition(symb, currDFA);
-   
-                //q.add(allElements) //if it has seen yet
-                	//add transition from currState to allElements on sym
+              
+                
+                if(dfa.getStartState() == null) { //Start state
+                	dfa.addStartState(currStateName);
+                	dfa.addTransition(currStateName, symb, nextStateName);
+                } else if (!contains(dfa.getStates() , currStateName)) { //All states
+                	dfa.addState(currStateName);
+                	dfa.addTransition(currStateName, symb, nextStateName);
+                	if(isFinal) {
+                		dfa.addFinalState(currStateName);
+                	}
+                }
+                
+                //TODO find the next NFAState to add to the queue.
+               
             }
 
         }
 		return dfa;
     }
 
-    @Override
+    private boolean contains(Set<DFAState> s, String SName) {
+    	
+    	for(DFAState dfastate : s) {
+    		if(dfastate.getName().equals(SName)); {
+    			return true;
+    		}
+    	}
+    	
+		return false ;
+	}
+    
+// private DFAState getFinal(Set<NFAState> s2) {
+//    	
+//    	for(DFAState dfastate : s2) {
+//    		if(dfastate.isFinal()); {
+//    			return dfastate;
+//    		}
+//    	}
+//    	
+//		return null;
+//	}
+
+	@Override
     public Set<NFAState> getToState(NFAState from, char onSymb) {
     	
    
