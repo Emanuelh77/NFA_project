@@ -72,6 +72,7 @@ public class NFA implements NFAInterface {
     	boolean isFinal = false;
     	//The starting state
         Set<NFAState> dfaState = eClosure(start);
+        Set<NFAState> nextNFA = null;
         //Initialize queue
         queue = new LinkedList<>();
         queue.add(dfaState);
@@ -83,19 +84,23 @@ public class NFA implements NFAInterface {
             for(Character symb: Sigma){					//For each alphabet symbol
                 for(NFAState currNFA: currState){		//For each state in the current state 
                   
-                	
-                	
+                	 currNFA.setVisited(true);
+                	 isFinal = currNFA.isFinal();
+                	 
+                	 nextNFA = currNFA.getTo(symb);
                 	
                 	Set<NFAState> next = currNFA.getTo(symb); //Set the next 
+                	
+                	
                     nextStateName = next.toString();
                     seenStateName.put(next, nextStateName);
                     Set<NFAState> nextEpsilon = new HashSet<>();         
                     for(NFAState nextSingle: next){
                         nextEpsilon.addAll(eClosure(nextSingle));  //Find the closure of each next
                             //Store name
-                        isFinal = nextSingle.isFinal();
+                       
                     } 
-                    ;
+                    
                 }
               
                 
@@ -103,15 +108,21 @@ public class NFA implements NFAInterface {
                 	dfa.addStartState(currStateName);
                 	dfa.addTransition(currStateName, symb, nextStateName);
                 } else if (!contains(dfa.getStates() , currStateName)) { //All states
-                	dfa.addState(currStateName);
-                	dfa.addTransition(currStateName, symb, nextStateName);
                 	if(isFinal) {
                 		dfa.addFinalState(currStateName);
+                	} else {
+                		dfa.addState(currStateName);
                 	}
+                	dfa.addTransition(currStateName, symb, nextStateName);
                 }
                 
+                
                 //TODO find the next NFAState to add to the queue.
-               
+//                if(nextNFA != null) {
+//                currState = nextNFA;
+//                queue.add(currState);
+//                }
+              
             }
 
         }
