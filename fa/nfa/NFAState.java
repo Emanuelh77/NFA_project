@@ -70,12 +70,10 @@ public class NFAState extends State {
   public void addTransition(char onSymb, NFAState toState) {
 	  HashSet<NFAState> temp = delta.get(onSymb);
 	  if(temp == null) {
-		  temp = new HashSet<>();
-	  }
-	  temp.add(toState);
-	  delta.put(onSymb, temp);
-    
-	  
+		  temp = new HashSet<NFAState>();
+	  } 
+     	temp.add(toState);
+	    delta.put(onSymb, temp);
   }
 
     public HashSet<NFAState> getTo(char symb){
@@ -84,7 +82,7 @@ public class NFAState extends State {
 //            System.err.println("ERROR: NFAState.getTo(char symb) returns null on " + symb + " from " + name);
 //            System.exit(2);
             //are we supposed to return an empty hashset then???
-            return null;
+            return new HashSet<NFAState>();
        }
         else {
         	return ret;
