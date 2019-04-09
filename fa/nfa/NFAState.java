@@ -52,9 +52,9 @@ public class NFAState extends State {
     private void initDefault(String name ) {
         this.name = name;
         isVisited = false;
-        delta = new HashMap<Character, HashSet<NFAState>  >();
+        delta = new HashMap<Character, HashSet<NFAState> >();
     }
-
+//
 //    public void addTransition(char onSymb, NFAState toState) {
 //    	HashSet<NFAState> temp = new HashSet<NFAState>();
 //    	if(delta.containsKey(onSymb)) { //If onSymb already in set
@@ -65,13 +65,13 @@ public class NFAState extends State {
 //    		temp.add(toState);
 //    	}
 //        delta.put(onSymb, temp);
-//        
+//
 //    }
   public void addTransition(char onSymb, NFAState toState) {
 	  HashSet<NFAState> temp = delta.get(onSymb);
 	  if(temp == null) {
 		  temp = new HashSet<NFAState>();
-	  } 
+	  }
      	temp.add(toState);
 	    delta.put(onSymb, temp);
   }
