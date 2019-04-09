@@ -73,7 +73,6 @@ public class NFA implements NFAInterface {
                 for(NFAState state: currState) {
                     state.setVisited(true);
                     HashSet<NFAState> next = state.getTo(symb); //set the next
-                    seenStateName.add(next);
 
                     if (next != null ) {
                         for (NFAState nextMove : next) {
